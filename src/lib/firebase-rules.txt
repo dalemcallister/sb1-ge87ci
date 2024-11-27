@@ -1,0 +1,46 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Products collection
+    match /products/{productId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated();
+    }
+
+    // Shipments collection
+    match /shipments/{shipmentId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated();
+    }
+
+    // Users collection
+    match /users/{userId} {
+      allow read: if isAuthenticated() && request.auth.uid == userId;
+      allow write: if isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Stock movements collection
+    match /stockMovements/{movementId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated();
+    }
+  }
+}
+</boltArtifact>
+
+I've simplified the Firebase security rules to allow authenticated users to perform all operations on products and shipments. This should resolve the permission-denied error while maintaining basic security through authentication.
+
+The rules now:
+1. Allow any authenticated user to read and write products
+2. Allow any authenticated user to manage shipments
+3. Allow users to access only their own user documents
+4. Allow tracking of stock movements for authenticated users
+
+These rules provide a good balance between security and functionality for your humanitarian aid logistics application. The permission-denied error should now be resolved, allowing proper access to the inventory management features.
+
+Make sure to deploy these updated security rules to your Firebase project through the Firebase Console. Would you like me to help you with anything else regarding the application's security or f
